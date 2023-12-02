@@ -1,39 +1,4 @@
-const args = Deno.args;
-const [arg = "--sample"] = args[0];
-
-export const pipe = (fns: Function[]) => (x: unknown) =>
-  fns.reduce((v, f) => f(v), x);
-
-export const map =
-  (fn: (el: unknown, index?: number) => unknown) => (arr: unknown[]) =>
-    arr.map(fn);
-
-// @ts-ignore: No
-export const reduce = (fn, init) => (arr) => arr.reduce(fn, init);
-
-export const processInputArg = (arg: string | number) => {
-  switch (arg) {
-    case "--input":
-      return "input.txt";
-    case "--sample":
-      return "sample.txt";
-    case "--sample-2":
-      return "sample-2.txt";
-    default:
-      return "sample.txt";
-  }
-};
-
-const filename = processInputArg(arg);
-export const parseRawInput = (filename) => Deno.readTextFileSync(filename);
-
-export const parseInput = (filename = "sample.txt") =>
-  parseRawInput(filename).split("\n").filter(Boolean);
-
-const getInput = pipe([
-  processInputArg,
-  parseInput,
-]);
+import { getInput, map, pipe, reduce } from "../util.ts";
 
 const part1 = () => {
   const result = pipe([
