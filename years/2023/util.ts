@@ -22,6 +22,7 @@ export const getInput = (arg = Deno.args[0] || "") =>
     parseInput,
   ])(arg);
 
+export const head: { <T>(arr: T[]): T } = (arr) => arr[0];
 export const last: { <T>(arr: T[]): T } = (arr) => arr[arr.length - 1];
 
 export const toInt = (str: string) => parseInt(str, 10);
