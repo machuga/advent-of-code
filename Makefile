@@ -1,4 +1,4 @@
-.PHONY: new-year days-for-year
+.PHONY: new-year days-for-year deno-build
 
 # Creates day-xx directories in the current directory
 days-for-year:
@@ -17,10 +17,10 @@ new-year:
 # Compiles a Swift script in a given year/day directory and runs the resulting executable
 swift-build:
 	@if [ -z "$(YEAR)" ] || [ -z "$(DAY)" ]; then \
-		echo "Error: Please provide YEAR, DAY, and ARG as arguments (e.g., 'make build-and-run-swift YEAR=2024 DAY=day-01 ARG=HelloWorld')"; \
+		echo "Error: Please provide YEAR, DAY, and ARG as arguments (e.g., 'make swift-build YEAR=2024 DAY=01 ARG=HelloWorld')"; \
 		exit 1; \
-	fi
-	@script_dir="years/$(YEAR)/day-$(DAY)"; \
+	fi; \
+	script_dir="years/$(YEAR)/day-$(DAY)"; \
 	if [ ! -d "$$script_dir" ]; then \
 		echo "Error: Directory $$script_dir does not exist"; \
 		exit 1; \
@@ -30,10 +30,13 @@ swift-build:
 		echo "Error: Swift script $$script_path does not exist"; \
 		exit 1; \
 	fi; \
-	echo "Compiling $$script_path..."; \
-	swiftc "$$script_path" -o "$$script_dir/swiftbuild"; \
+	util_path="years/$(YEAR)/util/util.swift"; \
+	echo "Compiling $$script_path with $$util_path..."; \
+	rm "$$script_dir/swiftbuild"; \
+	swiftc "$$script_path" "$$util_path" -o "$$script_dir/swiftbuild"; \
+	cd "$$script_dir"; \
 	echo "Running $$script_dir/swiftbuild with argument '$(ARG)'..."; \
-	"$$script_dir/swiftbuild" "$(ARG)"
+	"swiftbuild" "$(ARG)"
 
 # Executes Deno code
 deno-build:
