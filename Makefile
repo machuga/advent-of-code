@@ -34,3 +34,22 @@ swift-build:
 	swiftc "$$script_path" -o "$$script_dir/swiftbuild"; \
 	echo "Running $$script_dir/swiftbuild with argument '$(ARG)'..."; \
 	"$$script_dir/swiftbuild" "$(ARG)"
+
+# Executes Deno code
+deno-build:
+	@if [ -z "$(YEAR)" ] || [ -z "$(DAY)" ]; then \
+		echo "Error: Please provide YEAR, DAY, and ARG as arguments (e.g., 'make deno-build YEAR=2024 DAY=day-01 ARG=HelloWorld')"; \
+		exit 1; \
+	fi
+	@script_dir="years/$(YEAR)/day-$(DAY)"; \
+	if [ ! -d "$$script_dir" ]; then \
+		echo "Error: Directory $$script_dir does not exist"; \
+		exit 1; \
+	fi; \
+	script_path="$$script_dir/index.ts"; \
+	if [ ! -f "$$script_path" ]; then \
+		echo "Error: Deno script $$script_path does not exist"; \
+		exit 1; \
+	fi; \
+	echo "Running $$script_dir/swiftbuild with argument '$(ARG)'..."; \
+	"deno --allow-read $$script_path" "$(ARG)"
