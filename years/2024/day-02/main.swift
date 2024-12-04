@@ -31,7 +31,12 @@ func isRowSafe(_ row: [Int]) -> Bool {
     return zip(row, row.dropFirst()).allSatisfy { (a, b) in
         isSafeOperation(first: a, second: b, direction: direction)
     }
+}
 
+func rowWithoutIndex(row: [Int], index: Int) -> [Int] {
+    var newRow = row
+    newRow.remove(at: index)
+    return newRow
 }
 
 func partI() {
@@ -40,10 +45,26 @@ func partI() {
 }
 
 func partII() {
-    let answer = 0
+    let answer = input.filter {
+        if isRowSafe($0) {
+            return true
+        }
 
-    print("Part II answer: \(answer)")
+        // Something went wrong, need to scan all
+        for i in $0.indices {
+            let result = isRowSafe(rowWithoutIndex(row: $0, index: i))
+
+            if result == true {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    print("Part II answer: \(answer.count)")
 }
+
 partI();
 partII();
 
