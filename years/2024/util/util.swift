@@ -7,6 +7,10 @@ func parseInputArg(arg : String = "input") -> String {
         return "input.txt"
     }
 
+    if (arg == "--sample-2") {
+        return "sample-2.txt"
+    }
+
     return "sample.txt"
 }
 

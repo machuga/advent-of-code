@@ -8,35 +8,45 @@ let rawInputByLine : [String] = readInputFromFlag(flag: flag)
 //    $0.components(separatedBy: " ")
 //}
 
-let input = rawInputByLine
-let pattern = "mul\\((\\d{1,3}),(\\d{1,3})\\)"
+let input = rawInputByLine.joined(separator: "")
 
-func partI() {
+func parseMuls(input: String) -> Int {
+    let pattern = "mul\\((\\d{1,3}),(\\d{1,3})\\)"
     let regex = try! NSRegularExpression(pattern: pattern)
 
-    let answer = input.map { line in
-        let matches = regex.matches(in: line, range: NSRange(line.startIndex..., in: line))
+    let matches = regex.matches(in: input, range: NSRange(input.startIndex..., in: input))
 
-        let results = matches.map { match -> Int in
-            // Group 1: firstNum
-            let firstRange = Range(match.range(at: 1), in: line)!
-            let firstNum = Int(line[firstRange])!
+    return matches.map { match -> Int in
+        // Group 1: firstNum
+        let firstRange = Range(match.range(at: 1), in: input)!
+        let firstNum = Int(input[firstRange])!
 
-            // Group 2: secondNum
-            let secondRange = Range(match.range(at: 2), in: line)!
-            let secondNum = Int(line[secondRange])!
+        // Group 2: secondNum
+        let secondRange = Range(match.range(at: 2), in: input)!
+        let secondNum = Int(input[secondRange])!
 
-            return firstNum * secondNum
-        }.reduce(0, +)
-
-        return results
+        return firstNum * secondNum
     }.reduce(0, +)
+
+}
+
+func partI() {
+    let answer = parseMuls(input: input)
 
     print("Part I answer: \(answer)")
 }
 
 func partII() {
-    let answer = 0
+    let pattern = "(^|do\\(\\))(.*?)($|don't\\(\\))"
+    let regex = try! NSRegularExpression(pattern: pattern)
+
+    let matches = regex.matches(in: input, range: NSRange(input.startIndex..., in: input))
+    let answer = matches.map { match -> Int in
+        let range = Range(match.range(at: 2), in: input)!
+        let substr = String(input[range])
+
+        return parseMuls(input: substr)
+    }.reduce(0, +)
 
     print("Part II answer: \(answer)")
 }
