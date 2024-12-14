@@ -13,35 +13,53 @@ func mapToArrayOfInts(separator: String) -> (_ str : String) -> [Int] {
 let orderInstructions = inputSections[0].map(mapToArrayOfInts(separator: "|"))
 let challenges = inputSections[1].map(mapToArrayOfInts(separator: ","))
 
-func partI() {
-    let adjacency = orderInstructions.reduce(into: [Int: [Int]]()) { (dict, current) in
-        let el = current[0]
-        let before = current[1]
+let adjacency = orderInstructions.reduce(into: [Int: [Int]]()) { (dict, current) in
+    let el = current[0]
+    let elAfter = current[1]
 
-        dict[el, default: []].append(before)
-    }
+    dict[el, default: []].append(elAfter)
+}
 
-    let answer = challenges.filter { challenge in
-        var previous = -1
+func checkForCorrectOrder(_ challenge: [Int]) -> Bool {
+    var previous = -1
 
-        for (index, pageNum) in challenge.reversed().enumerated() {
-            if index != 0 {
-                if !adjacency[pageNum, default: []].contains(previous) {
-                    return false
-                }
+    for (index, pageNum) in challenge.reversed().enumerated() {
+        if index != 0 {
+            if !adjacency[pageNum, default: []].contains(previous) {
+                return false
             }
-
-            previous = pageNum
         }
 
-        return true
-    }.map { $0[$0.count / 2] }.reduce(0, +)
+        previous = pageNum
+    }
+
+    return true
+}
+
+func partI() {
+    let answer = challenges.filter(checkForCorrectOrder).map { $0[$0.count / 2] }.reduce(0, +)
 
     print("Part I answer: \(answer)")
 }
 
+func findCorrectOrder(_ challenge: [Int]) -> [Int] {
+    return challenge.sorted { (a, b) -> Bool in
+        guard adjacency.keys.contains(b) else {
+            return true
+        }
+
+        if adjacency[b]!.contains(a) { return false }
+
+        return true
+    }
+}
+
 func partII() {
-    let answer = 0
+    let invalids = challenges.filter { !checkForCorrectOrder($0) }
+
+    let correcteds = invalids.map(findCorrectOrder)
+
+    let answer = correcteds.map { $0[$0.count / 2] }.reduce(0, +)
 
     print("Part II answer: \(answer)")
 }
