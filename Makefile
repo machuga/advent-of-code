@@ -54,5 +54,5 @@ deno-build:
 		echo "Error: Deno script $$script_path does not exist"; \
 		exit 1; \
 	fi; \
-	echo "Running $$script_dir/swiftbuild with argument '$(ARG)'..."; \
+	echo "Running $$script_dir/deno-build with argument '$(ARG)'..."; \
 	"deno --allow-read $$script_path" "$(ARG)"
